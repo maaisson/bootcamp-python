@@ -2,18 +2,18 @@ import pandas as pd
 import os
 import glob
 
-def extrair_dados_e_consolidar(pasta:str) -> pd.DataFrame:
+def extrair_dados_e_consolidar(pasta:str) -> pd.DataFrame: #extract
     arquivos_json = glob.glob(os.path.join(pasta, '*.json'))
     df_list = [pd.read_json(arquivo) for arquivo in arquivos_json]
     df_total = pd.concat(df_list, ignore_index=True)
     return df_total
 
-def calcular_kpi_total_vendas(df: pd.DataFrame) -> pd.DataFrame:
+def calcular_kpi_total_vendas(df: pd.DataFrame) -> pd.DataFrame: #transform
     df_novo = df.copy()
     df_novo['Total'] = df_novo['Quantidade'] * df_novo['Venda']
     return df_novo
 
-def carregar_dados(df:pd.DataFrame, formato_saida:list):
+def carregar_dados(df:pd.DataFrame, formato_saida:list): #load
     if 'csv' in formato_saida:
         df.to_csv('vendas_total.csv', index=False)
     if 'parquet' in formato_saida:
