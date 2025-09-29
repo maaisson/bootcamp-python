@@ -23,5 +23,3 @@ def pipeline_calcular_kpi_de_vendas_consolidado(pasta:str, formato_saida:list):
     data_frame = extrair_dados_e_consolidar(pasta)
     data_frame_calculado = calcular_kpi_total_vendas(data_frame)
     carregar_dados(data_frame_calculado, formato_saida)
-
-    
