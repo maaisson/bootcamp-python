@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 import glob
+from utils.decorators import log_execution, time_execution, validate_dataframe
+from models import VendaItem
 
 def extrair_dados_e_consolidar(pasta:str) -> pd.DataFrame: #extract
     arquivos_json = glob.glob(os.path.join(pasta, '*.json'))
@@ -8,6 +10,7 @@ def extrair_dados_e_consolidar(pasta:str) -> pd.DataFrame: #extract
     df_total = pd.concat(df_list, ignore_index=True)
     return df_total
 
+@validate_dataframe(VendaItem)
 def calcular_kpi_total_vendas(df: pd.DataFrame) -> pd.DataFrame: #transform
     df_novo = df.copy()
     df_novo['Total'] = df_novo['Quantidade'] * df_novo['Venda']
@@ -18,7 +21,9 @@ def carregar_dados(df:pd.DataFrame, formato_saida:list): #load
         df.to_csv('vendas_total.csv', index=False)
     if 'parquet' in formato_saida:
         df.to_parquet('vendas_total.parquet', index=False)
-        
+
+@log_execution
+@time_execution        
 def pipeline_calcular_kpi_de_vendas_consolidado(pasta:str, formato_saida:list):
     data_frame = extrair_dados_e_consolidar(pasta)
     data_frame_calculado = calcular_kpi_total_vendas(data_frame)
